@@ -1,2 +1,6 @@
+#
+# Needed to query Proxmox API
 proxmoxer
+#
+# Needed by proxmoxer to use HTTP API
 requests

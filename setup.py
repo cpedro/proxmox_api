@@ -6,22 +6,6 @@ import os
 
 from setuptools import find_packages, setup
 
-# Package meta-data.
-NAME = 'pve_api'
-DESCRIPTION = 'Admin Proxmox VE via Python through web API.'
-URL = 'https://github.com/cpedro/proxmox_api'
-EMAIL = 'chris@thepedros.com'
-AUTHOR = 'Chris Pedro'
-REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.1.0'
-
-REQUIRED = [
-    'proxmoxer', 'requests',
-]
-
-EXTRAS = {
-}
-
 here = os.path.abspath(os.path.dirname(__file__))
 
 with io.open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
@@ -30,19 +14,24 @@ with io.open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 with io.open(os.path.join(here, 'LICENSE'), encoding='utf-8') as f:
     license = '\n' + f.read()
 
+required = []
+with io.open(os.path.join(here, 'requirements.txt'), encoding='utf-8') as f:
+    for line in f.readlines():
+        if not line.startswith('#'):
+            required.append(line)
+
 setup(
-    name=NAME,
-    version=VERSION,
-    description=DESCRIPTION,
+    name='pve_api',
+    version='0.1.0',
+    description='Admin Proxmox VE via Python through web API.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    author=AUTHOR,
-    author_email=EMAIL,
-    python_requires=REQUIRES_PYTHON,
-    url=URL,
+    author='Chris Pedro',
+    author_email='chris@thepedros.com',
+    url='https://github.com/cpedro/proxmox_api',
+    python_requires='>=3.6.0',
     packages=find_packages(exclude=["tests", "docs"]),
-    install_requires=REQUIRED,
-    extras_require=EXTRAS,
+    install_requires=required,
     include_package_data=True,
     license=license,
     classifiers=[

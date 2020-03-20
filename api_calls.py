@@ -61,8 +61,8 @@ def list_ha_groups(api, show_raw):
             print(r_out.format(res['sid'], res['type'], res['state']))
 
 
-def list_storage(api, show_raw):
-    storage = api.get_storage()
+def list_storages(api, show_raw):
+    storage = api.get_storages()
 
     if show_raw:
         print(json.dumps(storage))
@@ -150,7 +150,7 @@ def parse_args(args):
     parser.add_argument(
         '-n', '--list-nodes', action='store_true', help='List all nodes.')
     parser.add_argument(
-        '-s', '--list-storage', action='store_true', help='List all storage.')
+        '-s', '--list-storages', action='store_true', help='List all storage.')
     parser.add_argument(
         '-g', '--list-ha-groups', action='store_true', help='List HA groups.')
     return parser.parse_args(args)
@@ -183,8 +183,8 @@ def main(args):
         list_vms(api, args.show_raw)
     if args.list_nodes:
         list_nodes(api, args.show_raw)
-    if args.list_storage:
-        list_storage(api, args.show_raw)
+    if args.list_storages:
+        list_storages(api, args.show_raw)
     if args.list_ha_groups:
         list_ha_groups(api, args.show_raw)
 

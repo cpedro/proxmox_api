@@ -44,7 +44,7 @@ class PVEAPI(object):
     def api(self, api):
         self._api = api
 
-    def create_vm(self, node, vm):
+    def create_vm(self, node, vm, *args, **kwargs):
         """Creates and sets up a VM on the PVE cluster.
         """
         self.api.nodes(node).qemu.create(**vm)
@@ -78,7 +78,7 @@ class PVEAPI(object):
 
         return nodes
 
-    def get_storage(self, *args, **kwargs):
+    def get_storages(self, *args, **kwargs):
         """Get and returns a list of all storage active on the PVE cluster.
         """
         storage = []
@@ -106,7 +106,7 @@ class PVEAPI(object):
         all_disks = []
 
         for node in self.api.nodes.get():
-            vms.extend(self.api.nodes(node['node']).get('qemu'))
+            vms.extend(self.api.nodes(node['node']).get('qemu', full=1))
             # Loop through storage with content = images only.
             storage = self.api.nodes(node['node']).get(
                 'storage', content='images')
