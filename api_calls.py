@@ -27,7 +27,6 @@ optional arguments:
 __author__ = 'Chris Pedro'
 __copyright__ = '(c) Chris Pedro 2020'
 __licence__ = 'MIT'
-__version__ = '0.1.0'
 
 
 import argparse
@@ -35,7 +34,7 @@ import getpass
 import json
 import sys
 
-from pve_api import PVEAPI
+from pve import API
 from signal import signal, SIGINT
 
 
@@ -176,7 +175,7 @@ def main(args):
     else:
         password = args.password
 
-    api = PVEAPI(
+    api = API(
         args.host, user=args.username, password=password, verify_ssl=False)
 
     if args.list_vms:

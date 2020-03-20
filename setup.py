@@ -3,6 +3,7 @@
 
 import io
 import os
+import pve
 
 from setuptools import find_packages, setup
 
@@ -21,8 +22,8 @@ with io.open(os.path.join(here, 'requirements.txt'), encoding='utf-8') as f:
             required.append(line)
 
 setup(
-    name='pve_api',
-    version='0.1.0',
+    name='pve',
+    version=pve.__version__,
     description='Admin Proxmox VE via Python through web API.',
     long_description=long_description,
     long_description_content_type='text/markdown',

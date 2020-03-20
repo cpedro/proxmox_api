@@ -7,7 +7,6 @@ Description: Core of Proxmox API.  Defines the class and methods.
 __author__ = 'Chris Pedro'
 __copyright__ = '(c) Chris Pedro 2020'
 __licence__ = 'MIT'
-__version__ = '0.1.0'
 
 
 from proxmoxer import ProxmoxAPI
@@ -28,7 +27,7 @@ def dedup(dict, id):
     return dedup
 
 
-class PVEAPI(object):
+class API(object):
     """Proxmox VE API class.  Does common tasks, wrapping up what is in
     proxmoxer.
     """
