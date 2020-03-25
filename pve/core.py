@@ -43,10 +43,44 @@ class API(object):
     def api(self, api):
         self._api = api
 
-    def create_vm(self, node, vm, *args, **kwargs):
+    def create_vm(self, node, vmid, *args, **kwargs):
         """Creates and sets up a VM on the PVE cluster.
         """
-        self.api.nodes(node).qemu.create(**vm)
+        self.api.nodes(node).qemu.create(vmid=vmid, **kwargs)
+        return
+
+    def delete_vm(self, node, vmid, *args, **kwargs):
+        """Deletes a VM from a node.
+        Can use **kwargs to specify additional options, such as purge=1 to
+        purge disks and backups.
+        """
+        self.api.nodes(node).qemu(vmid).delete(**kwargs)
+        return
+
+    def start_vm(self, node, vmid, *args, **kwargs):
+        """Starts a VM on a node.
+        """
+        self.api.nodes(node).qemu(vmid).status.start.post(**kwargs)
+        return
+
+    def stop_vm(self, node, vmid, *args, **kwargs):
+        """Stops a VM on a node.
+        """
+        self.api.nodes(node).qemu(vmid).status.stop.post(**kwargs)
+        return
+
+    def ha_add_vm(self, vmid, *args, **kwargs):
+        """Adds VM as a HA resource.
+        Can use **kwargs to specify additional options, such as group='<group>'
+        to specify group to be added to, or state='started'
+        """
+        self.api.cluster.ha.resources.create(sid='vm:' + str(vmid), **kwargs)
+        return
+
+    def ha_remove_vm(self, vmid, *args, **kwargs):
+        """Removes a VM from HA.
+        """
+        self.api.cluster.ha.resources('vm:' + str(vmid)).delete()
         return
 
     def get_ha_groups(self, *args, **kwargs):
@@ -58,8 +92,7 @@ class API(object):
         for group in groups:
             group_resources = []
             for resource in resources:
-                if resource['group'] == group['group']:
-                    group_resources.append(resource)
+                group_resources.append(resource)
             group['resources'] = group_resources
 
         return groups
