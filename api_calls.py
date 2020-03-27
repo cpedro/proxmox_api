@@ -38,10 +38,13 @@ from pve import API
 from signal import signal, SIGINT
 
 
-def list_ha_groups(api, show_raw):
+def list_ha_groups(api, *args, **kwargs):
     groups = api.get_ha_groups()
 
-    if show_raw:
+    if kwargs['show_raw']:
+        print(groups)
+        return
+    if kwargs['show_json']:
         print(json.dumps(groups))
         return
 
@@ -60,10 +63,13 @@ def list_ha_groups(api, show_raw):
             print(r_out.format(res['sid'], res['type'], res['state']))
 
 
-def list_storages(api, show_raw):
+def list_storages(api, *args, **kwargs):
     storage = api.get_storages()
 
-    if show_raw:
+    if kwargs['show_raw']:
+        print(storage)
+        return
+    if kwargs['show_json']:
         print(json.dumps(storage))
         return
 
@@ -80,10 +86,13 @@ def list_storages(api, show_raw):
             ds['total'], ds['used_fraction']))
 
 
-def list_nodes(api, show_raw):
+def list_nodes(api, *args, **kwargs):
     nodes = api.get_nodes()
 
-    if show_raw:
+    if kwargs['show_raw']:
+        print(nodes)
+        return
+    if kwargs['show_json']:
         print(json.dumps(nodes))
         return
 
@@ -105,10 +114,13 @@ def list_nodes(api, show_raw):
                 print(ip_out.format(net['cidr']))
 
 
-def list_vms(api, show_raw):
+def list_vms(api, *args, **kwargs):
     vms = api.get_vms()
 
-    if show_raw:
+    if kwargs['show_raw']:
+        print(vms)
+        return
+    if kwargs['show_json']:
         print(json.dumps(vms))
         return
 
@@ -142,7 +154,10 @@ def parse_args(args):
         help='Password, leave blank to be prompted to enter your password')
     parser.add_argument(
         '-r', '--show-raw', action='store_true',
-        help='Show raw output as JSON instead of formatted output.')
+        help='Show raw output instead of formatted output.')
+    parser.add_argument(
+        '-j', '--show-json', action='store_true',
+        help='Show output as JSON instead of formatted output.')
     parser.add_argument(
         '-v', '--list-vms', action='store_true',
         help='List all virtual machines and their disks.')
@@ -175,17 +190,19 @@ def main(args):
     else:
         password = args.password
 
+    f_kwargs = {'show_raw': args.show_raw, 'show_json': args.show_json}
+
     api = API(
         args.host, user=args.username, password=password, verify_ssl=False)
 
     if args.list_vms:
-        list_vms(api, args.show_raw)
+        list_vms(api, **f_kwargs)
     if args.list_nodes:
-        list_nodes(api, args.show_raw)
+        list_nodes(api, **f_kwargs)
     if args.list_storages:
-        list_storages(api, args.show_raw)
+        list_storages(api, **f_kwargs)
     if args.list_ha_groups:
-        list_ha_groups(api, args.show_raw)
+        list_ha_groups(api, **f_kwargs)
 
 
 if __name__ == '__main__':
