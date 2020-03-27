@@ -3,7 +3,7 @@
 __author__ = 'Chris Pedro'
 __copyright__ = '(c) Chris Pedro 2020'
 __licence__ = 'MIT'
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
 from .core import API
 
