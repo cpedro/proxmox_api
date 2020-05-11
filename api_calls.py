@@ -38,7 +38,7 @@ from pve import API
 from signal import signal, SIGINT
 
 
-def list_ha_groups(api, *args, **kwargs):
+def list_ha_groups(api, **kwargs):
     groups = api.get_ha_groups()
 
     if kwargs['show_raw']:
@@ -63,7 +63,7 @@ def list_ha_groups(api, *args, **kwargs):
             print(r_out.format(res['sid'], res['type'], res['state']))
 
 
-def list_storages(api, *args, **kwargs):
+def list_storages(api, **kwargs):
     storage = api.get_storages()
 
     if kwargs['show_raw']:
@@ -86,7 +86,7 @@ def list_storages(api, *args, **kwargs):
             ds['total'], ds['used_fraction']))
 
 
-def list_nodes(api, *args, **kwargs):
+def list_nodes(api, **kwargs):
     nodes = api.get_nodes()
 
     if kwargs['show_raw']:
@@ -114,7 +114,7 @@ def list_nodes(api, *args, **kwargs):
                 print(ip_out.format(net['cidr']))
 
 
-def list_vms(api, *args, **kwargs):
+def list_vms(api, **kwargs):
     vms = api.get_vms()
 
     if kwargs['show_raw']:

@@ -12,19 +12,19 @@ __licence__ = 'MIT'
 from proxmoxer import ProxmoxAPI
 
 
-def dedup(dict, id):
-    """Quick and dirty function to dedup the lists of dictionaries based on an
-    id to determine whether or not an item has been 'seen'
+def dedup(dict, to_match):
+    """Quick and dirty function to deduplicate the lists of dictionaries based
+    on an id to determine whether or not an item has been 'seen'
     """
     seen = set()
-    dedup = []
+    dlist = []
 
     for d in dict:
-        if d[id] not in seen:
-            seen.add(d[id])
-            dedup.append(d)
+        if d[to_match] not in seen:
+            seen.add(d[to_match])
+            dlist.append(d)
 
-    return dedup
+    return dlist
 
 
 class API(object):
@@ -43,13 +43,13 @@ class API(object):
     def api(self, api):
         self._api = api
 
-    def create_vm(self, node, vmid, *args, **kwargs):
+    def create_vm(self, node, vmid, **kwargs):
         """Creates and sets up a VM on the PVE cluster.
         """
         self.api.nodes(node).qemu.create(vmid=vmid, **kwargs)
         return
 
-    def delete_vm(self, node, vmid, *args, **kwargs):
+    def delete_vm(self, node, vmid, **kwargs):
         """Deletes a VM from a node.
         Can use **kwargs to specify additional options, such as purge=1 to
         purge disks and backups.
@@ -57,19 +57,19 @@ class API(object):
         self.api.nodes(node).qemu(vmid).delete(**kwargs)
         return
 
-    def start_vm(self, node, vmid, *args, **kwargs):
+    def start_vm(self, node, vmid, **kwargs):
         """Starts a VM on a node.
         """
         self.api.nodes(node).qemu(vmid).status.start.post(**kwargs)
         return
 
-    def stop_vm(self, node, vmid, *args, **kwargs):
+    def stop_vm(self, node, vmid, **kwargs):
         """Stops a VM on a node.
         """
         self.api.nodes(node).qemu(vmid).status.stop.post(**kwargs)
         return
 
-    def ha_add_vm(self, vmid, *args, **kwargs):
+    def ha_add_vm(self, vmid, **kwargs):
         """Adds VM as a HA resource.
         Can use **kwargs to specify additional options, such as group='<group>'
         to specify group to be added to, or state='started'
@@ -77,14 +77,15 @@ class API(object):
         self.api.cluster.ha.resources.create(sid='vm:' + str(vmid), **kwargs)
         return
 
-    def ha_remove_vm(self, vmid, *args, **kwargs):
+    def ha_remove_vm(self, vmid):
         """Removes a VM from HA.
         """
         self.api.cluster.ha.resources('vm:' + str(vmid)).delete()
         return
 
-    def get_ha_groups(self, *args, **kwargs):
-        """Get and returns all HA groups on the PVE cluster, along with resources.
+    def get_ha_groups(self):
+        """Get and returns all HA groups on the PVE cluster, along with
+        resources.
         """
         groups = self.api.cluster.ha.groups.get()
         resources = self.api.cluster.ha.resources.get()
@@ -97,7 +98,7 @@ class API(object):
 
         return groups
 
-    def get_nodes(self, *args, **kwargs):
+    def get_nodes(self):
         """Get and returns a list of all nodes on the PVE cluster.
         """
         nodes = self.api.nodes.get()
@@ -110,7 +111,7 @@ class API(object):
 
         return nodes
 
-    def get_storages(self, *args, **kwargs):
+    def get_storages(self):
         """Get and returns a list of all storage active on the PVE cluster.
         """
         storage = []
@@ -131,7 +132,7 @@ class API(object):
 
         return storage
 
-    def get_vms(self, *args, **kwargs):
+    def get_vms(self):
         """Get and returns a list of all VMs and disks on the PVE cluster.
         """
         vms = []
@@ -149,10 +150,9 @@ class API(object):
         all_disks = dedup(all_disks, 'volid')
 
         for vm in vms:
-            vmdisks = []
-            for disk in all_disks:
-                if int(disk['vmid']) == int(vm['vmid']):
-                    vmdisks.append(disk)
+            vmdisks = list(
+                disk for disk in all_disks
+                if int(disk['vmid']) == int(vm['vmid']))
             vm['disks'] = vmdisks
 
         return vms
