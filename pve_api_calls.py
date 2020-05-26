@@ -140,6 +140,15 @@ def list_vms(api, **kwargs):
             print(d_out.format(disk['volid'], disk['size']))
 
 
+def fstrim_vms(api, **kwargs):
+    for vm in api.get_vms():
+        output = api.fstim_vm(vm['node'], vm['vmid'])
+        if kwargs['show_raw']:
+            print(output)
+        elif kwargs['show_json']:
+            print(json.dumps(output))
+
+
 def parse_args(args):
     """Parse command line arguments.
     """
@@ -167,6 +176,8 @@ def parse_args(args):
         '-s', '--list-storages', action='store_true', help='List all storage.')
     parser.add_argument(
         '-g', '--list-ha-groups', action='store_true', help='List HA groups.')
+    parser.add_argument(
+        '-f', '--fstrim', action='store_true', help='Run fstrim on all VMs.')
     return parser.parse_args(args)
 
 
@@ -203,6 +214,8 @@ def main(args):
         list_storages(api, **f_kwargs)
     if args.list_ha_groups:
         list_ha_groups(api, **f_kwargs)
+    if args.fstrim:
+        fstrim_vms(api, **f_kwargs)
 
 
 if __name__ == '__main__':

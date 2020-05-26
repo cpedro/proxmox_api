@@ -139,7 +139,10 @@ class API(object):
         all_disks = []
 
         for node in self.api.nodes.get():
-            vms.extend(self.api.nodes(node['node']).get('qemu', full=1))
+            # Before adding VM to list, add the node as well.
+            for vm in self.api.nodes(node['node']).get('qemu', full=1):
+                vm['node'] = node['node']
+                vms.append(vm)
             # Loop through storage with content = images only.
             storage = self.api.nodes(node['node']).get(
                 'storage', content='images')
@@ -156,4 +159,12 @@ class API(object):
             vm['disks'] = vmdisks
 
         return vms
+
+    def fstim_vm(self, node, vmid):
+        """Perform an fstrim on a VM.
+        """
+        try:
+            return self.api.nodes(node).qemu(vmid).agent.post('fstrim')
+        except Exception as e:
+            return {'result': {'exception': str(e)}}
 
