@@ -10,14 +10,14 @@ To make sure you have all requirements:
 $ pip3 install -r requirements.txt
 ```
 
-## api_calls.py
+## pve_api_calls.py
 Main script that can be used to call the underlying functions defined in pve.
 
 ```
-usage: api_calls.py [-h] -H HOST -u USERNAME [-p PASSWORD] [-r] [-v] [-n] [-s]
-                    [-g]
+usage: pve_api_calls.py [-h] -H HOST -u USERNAME [-p PASSWORD] [-r] [-j] [-v]
+                        [-n] [-s] [-g] [-f]
 
-Proxmox API Test Program
+CLI Proxmox API Program
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -27,17 +27,19 @@ optional arguments:
   -p PASSWORD, --password PASSWORD
                         Password, leave blank to be prompted to enter your
                         password
-  -r, --show-raw        Show raw output as JSON instead of formatted output.
+  -r, --show-raw        Show raw output instead of formatted output.
+  -j, --show-json       Show output as JSON instead of formatted output.
   -v, --list-vms        List all virtual machines and their disks.
   -n, --list-nodes      List all nodes.
-  -s, --list-storage    List all storage.
+  -s, --list-storages   List all storage.
   -g, --list-ha-groups  List HA groups.
+  -f, --fstrim          Run fstrim on all VMs.
 ```
 
-When using the `-r`, you can pipe through `jq` for 'cleaner' output.  It can
+When using the `-j`, you can pipe through `jq` for 'cleaner' output.  It can
 also be used to filter output.
 ```bash
-$ ./api_calls.py -H HOST -u USER -p PASS -s -r | jq
+$ ./pve_api_calls.py -H HOST -u USER -p PASS -s -j | jq
 [
   {
     "total": 35401613312,
